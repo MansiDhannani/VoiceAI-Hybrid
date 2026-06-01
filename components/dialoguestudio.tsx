@@ -336,22 +336,7 @@ export default function DialogueStudio() {
 
       {/* Result */}
       {renderStatus === "done" && result && (
-        <div style={s.resultBox}>
-          <div style={s.row}>
-            <div>
-              <p style={{ color: "#34d399", fontWeight: 600, margin: 0 }}>✅ Render Complete</p>
-              <p style={{ color: "#6ee7b7", fontSize: 12, margin: "4px 0 0" }}>
-                {result.lines_rendered} lines · {result.duration_seconds}s · {result.file_size_kb}KB
-              </p>
-            </div>
-            <a href={`${API_URL}${result.download_url}`}
-              download={`dialogue_${result.render_id}.wav`} style={s.downloadBtn}>
-              ⬇ Download WAV
-            </a>
-          </div>
-          <audio ref={audioRef} controls src={`${API_URL}${result.download_url}`}
-            style={{ width: "100%", marginTop: 12 }} />
-        </div>
+        <ResultBox result={result} apiUrl={API_URL} ngrokHeader={NGROK_HEADER} />
       )}
 
       {renderStatus === "error" && (
@@ -393,6 +378,55 @@ function VoiceUploadCard({
           {(file.size / 1024).toFixed(0)}KB · {file.type || "audio"}
           {file.size > 45 * 1024 * 1024 && " ⚠️ Too large"}
         </p>
+      )}
+    </div>
+  );
+}
+
+function ResultBox({ result, apiUrl, ngrokHeader }: { result: RenderResult; apiUrl: string; ngrokHeader: Record<string, string> }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [blobUrl, setBlobUrl] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    // Fetch audio with ngrok header to bypass the browser warning page
+    fetch(`${apiUrl}${result.download_url}`, { headers: ngrokHeader })
+      .then(r => r.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+      })
+      .catch(() => {});
+    return () => { if (blobUrl) URL.revokeObjectURL(blobUrl); };
+  }, [result.download_url]);
+
+  const handleDownload = () => {
+    if (!blobUrl) return;
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = `dialogue_${result.render_id}.wav`;
+    a.click();
+  };
+
+  return (
+    <div style={s.resultBox}>
+      <div style={s.row}>
+        <div>
+          <p style={{ color: "#34d399", fontWeight: 600, margin: 0 }}>✅ Render Complete</p>
+          <p style={{ color: "#6ee7b7", fontSize: 12, margin: "4px 0 0" }}>
+            {result.lines_rendered} lines · {result.duration_seconds}s · {result.file_size_kb}KB · 48kHz stereo
+          </p>
+        </div>
+        <button onClick={handleDownload} disabled={!blobUrl} style={{
+          ...s.downloadBtn,
+          opacity: blobUrl ? 1 : 0.5,
+          cursor: blobUrl ? "pointer" : "wait",
+          border: "none",
+        }}>
+          {blobUrl ? "⬇ Download WAV" : "⏳ Preparing..."}
+        </button>
+      </div>
+      {blobUrl && (
+        <audio ref={audioRef} controls src={blobUrl} style={{ width: "100%", marginTop: 12 }} />
       )}
     </div>
   );
