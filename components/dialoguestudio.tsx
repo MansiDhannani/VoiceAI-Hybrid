@@ -384,8 +384,8 @@ function VoiceUploadCard({
         </select>
       </div>
       <label style={{ ...s.uploadLabel, borderColor: color }}>
-        {file ? `✅ ${file.name}` : "📁 Upload WAV/MP3 file"}
-        <input type="file" accept=".wav,.mp3,.m4a,.ogg,.flac" style={{ display: "none" }}
+        {file ? `✅ ${file.name}` : "📁 Upload WAV/MP3/MP4 file"}
+        <input type="file" accept=".wav,.mp3,.m4a,.ogg,.flac,.mp4,.mpeg,.mov,.webm" style={{ display: "none" }}
           onChange={e => e.target.files?.[0] && onFile(e.target.files[0])} />
       </label>
       {file && (
