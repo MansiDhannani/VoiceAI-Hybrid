@@ -377,6 +377,8 @@ function VoiceUploadCard({
         <p style={{ color: file.size > 45 * 1024 * 1024 ? "#f87171" : "#64748b", fontSize: 11, marginTop: 4 }}>
           {(file.size / 1024).toFixed(0)}KB · {file.type || "audio"}
           {file.size > 45 * 1024 * 1024 && " ⚠️ Too large"}
+          {[".mp4",".mpeg",".mpg",".mov",".avi",".webm",".mkv"].some(e => file.name.toLowerCase().endsWith(e)) &&
+            <span style={{ color: "#f59e0b" }}> ⚠️ Video — audio will be extracted</span>}
         </p>
       )}
     </div>
