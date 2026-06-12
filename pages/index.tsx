@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const NGROK_HEADER = { "ngrok-skip-browser-warning": "true" };
+const NGROK_HEADER = { "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" };
 
 export default function Home() {
   const router = useRouter();
@@ -26,8 +26,8 @@ export default function Home() {
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
         headers: isLogin
-          ? { "Content-Type": "application/x-www-form-urlencoded", "ngrok-skip-browser-warning": "true" }
-          : { "Content-Type": "application/x-www-form-urlencoded", "ngrok-skip-browser-warning": "true" },
+          ? { "Content-Type": "application/x-www-form-urlencoded", "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" }
+          : { "Content-Type": "application/x-www-form-urlencoded", "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" },
         body: body.toString(),
       });
 

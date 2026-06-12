@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 // Backend API URL - configured via Vercel environment variables
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const WS_URL  = process.env.NEXT_PUBLIC_WS_URL  ?? "ws://localhost:8000";
-const NGROK_HEADER = { "ngrok-skip-browser-warning": "true" };
+const NGROK_HEADER = { "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" };
 
 const EXAMPLE_SCRIPT = `A: [neutral] Hey, did you hear about the new AI tools coming out?
 B: [excited] Yes! I've been reading about them all morning. It's incredible.
