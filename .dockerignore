@@ -1,0 +1,16 @@
+frontend/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.git
+.gitignore
+node_modules/
+openvoice_src/
+checkpoints_v2/
+voice_profiles/
+renders/
+temp_voices/
+*.zip
+*.log

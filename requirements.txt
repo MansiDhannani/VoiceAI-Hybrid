@@ -1,0 +1,31 @@
+# Web framework
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+websockets==12.0
+httpx==0.27.0
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+pydantic-settings==2.2.1
+
+# Database
+sqlalchemy==2.0.30
+asyncpg==0.29.0
+
+# LOCAL ASR — Whisper small (int8, ~1GB VRAM)
+faster-whisper==1.0.1
+
+# LOCAL TTS — XTTS-v2 (~2.5GB VRAM)
+TTS==0.22.0
+
+# Audio processing
+soundfile==0.12.1
+numpy==1.26.4
+torch==2.3.0+cu121
+torchaudio==2.3.0+cu121
+
+# Task queue
+redis==5.0.4
+celery==5.4.0

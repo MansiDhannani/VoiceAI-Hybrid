@@ -1,5 +1,56 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python caching / compiled
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node.js
 node_modules/
+frontend/node_modules/
+
+# Next.js build output
 .next/
-.vercel/
+frontend/.next/
+out/
+frontend/out/
+
+# Environment files (containing secrets)
+.env
 .env.local
-*.log
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+vastai.env
+
+# Large model checkpoints / cache (OpenVoice & TTS caches)
+checkpoints_v2/
+root/.cache/
+~/.cache/
+**/models/
+**/*.pth
+**/*.bin
+**/*.onnx
+
+# Temporary generated files & user data
+backend/renders/
+backend/temp_voices/
+backend/voice_profiles/
+renders/
+temp_voices/
+voice_profiles/
+**/renders/
+**/temp_voices/
+**/voice_profiles/
+
+# IDE / System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
