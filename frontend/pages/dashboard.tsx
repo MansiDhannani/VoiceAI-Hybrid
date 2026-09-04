@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 const NGROK_HEADER = { "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" };
+
+const Canvas        = dynamic(() => import("@react-three/fiber").then(m => m.Canvas), { ssr: false });
+const ParticleField = dynamic(() => import("../components/ParticleField"), { ssr: false });
 
 export default function Dashboard() {
   const router = useRouter();
@@ -64,11 +68,23 @@ export default function Dashboard() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.logo}>🎙 VoiceAI</h1>
-        <div style={styles.headerRight}>
-          <span style={styles.user}>👤 {username}</span>
-          <button style={styles.logoutBtn} onClick={logout}>Logout</button>
+      {/* ── 3D Hero Header ── */}
+      <div style={styles.hero}>
+        {/* particle canvas behind header */}
+        <div style={styles.heroBg}>
+          <Canvas camera={{ position: [0, 0, 7], fov: 55 }} style={{ background: "transparent" }}>
+            <Suspense fallback={null}>
+              <ParticleField count={350} color="#818cf8" />
+            </Suspense>
+          </Canvas>
+        </div>
+        <div style={styles.heroContent}>
+          <h1 style={styles.logo}>🎙 VoiceAI</h1>
+          <p style={styles.heroSub}>AI Voice Cloning · Revenue Recovery · Emotion-Aware Conversations</p>
+          <div style={styles.headerRight}>
+            <span style={styles.user}>👤 {username}</span>
+            <button style={styles.logoutBtn} onClick={logout}>Logout</button>
+          </div>
         </div>
       </div>
 
@@ -218,16 +234,29 @@ export default function Dashboard() {
 
 const styles: Record<string, React.CSSProperties> = {
   container: { minHeight: "100vh", background: "#0f0e1a", color: "#fff" },
-  header: {
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    padding: "16px 32px", borderBottom: "1px solid rgba(255,255,255,0.08)",
-    background: "rgba(255,255,255,0.03)",
+  hero: {
+    position: "relative", height: 160, overflow: "hidden",
+    borderBottom: "1px solid rgba(255,255,255,0.08)",
+    background: "linear-gradient(180deg, #0a0918 0%, #0f0e1a 100%)",
   },
-  logo: { margin: 0, fontSize: 22, color: "#a5b4fc" },
-  headerRight: { display: "flex", alignItems: "center", gap: 16 },
+  heroBg: {
+    position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
+  },
+  heroContent: {
+    position: "relative", zIndex: 1,
+    display: "flex", flexDirection: "column", alignItems: "flex-start",
+    justifyContent: "center", height: "100%",
+    padding: "0 32px", gap: 4,
+  },
+  logo: { margin: 0, fontSize: 26, color: "#e0e7ff", fontWeight: 800 },
+  heroSub: { margin: 0, fontSize: 12, color: "#6366f1", letterSpacing: "0.04em" },
+  headerRight: { display: "flex", alignItems: "center", gap: 16, position: "absolute", right: 32, top: "50%", transform: "translateY(-50%)" },
   user: { color: "#a5b4fc", fontSize: 14 },
-  logoutBtn: { padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "#fff", cursor: "pointer", fontSize: 13 },
-  content: { maxWidth: 640, margin: "40px auto", padding: "0 24px", display: "flex", flexDirection: "column", gap: 20 },
+  logoutBtn: {
+    padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)",
+    background: "transparent", color: "#fff", cursor: "pointer", fontSize: 13,
+  },
+  content: { maxWidth: 640, margin: "32px auto", padding: "0 24px", display: "flex", flexDirection: "column", gap: 20 },
   card: { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 24 },
   cardTitle: { margin: "0 0 16px", fontSize: 16, fontWeight: 600, color: "#e0e7ff" },
   badges: { display: "flex", flexWrap: "wrap", gap: 8 },
