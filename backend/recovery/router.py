@@ -7,7 +7,7 @@ import io
 import os
 import uuid
 from pathlib import Path
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Form, File, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -345,31 +345,32 @@ async def get_audit_trail(tx_id: str | None = None):
 
 # ── Data management endpoints ─────────────────────────────────────────────
 
+class AddTransactionBody(BaseModel):
+    customer_name: str
+    amount: float
+    currency: str = "INR"
+    payment_status: str
+    failure_reason: str = "unknown"
+    customer_language: str = "en"
+    customer_type: str = "new"
+    phone: str = ""
+    email: str = ""
+
 @router.post("/transactions/add")
-async def add_transaction(
-    customer_name: str = Form(...),
-    amount: float = Form(...),
-    currency: str = Form("INR"),
-    payment_status: str = Form(...),
-    failure_reason: str = Form(...),
-    customer_language: str = Form("en"),
-    customer_type: str = Form("new"),
-    phone: str = Form(""),
-    email: str = Form(""),
-):
+async def add_transaction(body: AddTransactionBody):
     """Add a new transaction manually."""
     from recovery.dataset import _add_transaction
     
     tx = _add_transaction(
-        customer_name=customer_name,
-        amount=amount,
-        currency=currency,
-        payment_status=payment_status,
-        failure_reason=failure_reason,
-        customer_language=customer_language,
-        customer_type=customer_type,
-        phone=phone,
-        email=email,
+        customer_name=body.customer_name,
+        amount=body.amount,
+        currency=body.currency,
+        payment_status=body.payment_status,
+        failure_reason=body.failure_reason,
+        customer_language=body.customer_language,
+        customer_type=body.customer_type,
+        phone=body.phone,
+        email=body.email,
     )
     return {"transaction_id": tx.transaction_id, "message": "Transaction added successfully"}
 

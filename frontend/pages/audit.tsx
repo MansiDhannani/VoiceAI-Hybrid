@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 const NGROK_HEADER = { "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" };
 
 interface AuditEntry {
@@ -56,9 +56,10 @@ export default function AuditTrail() {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/recovery/audit`, { headers: NGROK_HEADER });
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
       const data = await res.json();
-      setEntries(data.entries);
-      setSummary(data.summary);
+      setEntries(data.entries ?? []);
+      setSummary(data.summary ?? null);
     } catch (err) {
       console.error("Failed to load audit data:", err);
     } finally {
@@ -162,7 +163,16 @@ export default function AuditTrail() {
         <div style={styles.card}>
           <h2 style={styles.cardTitle}>Audit Log ({filteredEntries.length} entries)</h2>
           <div style={styles.auditList}>
-            {filteredEntries.map((entry) => (
+            {filteredEntries.length === 0 ? (
+              <div style={styles.emptyState}>
+                <div style={styles.emptyIcon}>📋</div>
+                <div style={styles.emptyTitle}>No audit entries yet</div>
+                <div style={styles.emptyHint}>
+                  Go to the Recovery Dashboard and run <strong>Batch AI Analysis</strong> or click <strong>🤖 Decide</strong> on a transaction to generate audit entries.
+                </div>
+              </div>
+            ) : (
+              filteredEntries.map((entry) => (
               <div
                 key={entry.audit_id}
                 style={styles.auditEntry}
@@ -231,7 +241,8 @@ export default function AuditTrail() {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </div>
 
@@ -351,4 +362,11 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)",
     color: "#f59e0b", lineHeight: 1.6,
   },
+  emptyState: {
+    display: "flex", flexDirection: "column" as const, alignItems: "center",
+    padding: "48px 24px", gap: 12, textAlign: "center" as const,
+  },
+  emptyIcon: { fontSize: 48 },
+  emptyTitle: { fontSize: 18, fontWeight: 600, color: "#e0e7ff" },
+  emptyHint: { fontSize: 14, color: "#64748b", maxWidth: 420, lineHeight: 1.6 },
 };

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000";
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8080";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 type Status = "ready" | "recording" | "transcribing" | "thinking" | "speaking";
 
@@ -31,7 +31,7 @@ export default function VoiceConversation({ userId }: { userId: string }) {
 
   // Fetch pipeline info on mount
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/health`).then(r => r.json()).then(d => setPipeline(d.pipeline ?? {}));
+    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"}/health`).then(r => r.json()).then(d => setPipeline(d.pipeline ?? {}));
   }, []);
 
   useEffect(() => {
