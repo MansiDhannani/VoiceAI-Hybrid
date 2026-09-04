@@ -84,16 +84,26 @@ export default function VoiceConversation({ userId }: { userId: string }) {
 
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const rec = new MediaRecorder(stream, { mimeType: "audio/webm" });
+    // Pick a supported mimeType — prefer ogg/opus (better WebM header support in Chrome)
+    const mimeType = [
+      "audio/ogg;codecs=opus",
+      "audio/webm;codecs=opus",
+      "audio/webm",
+    ].find(t => MediaRecorder.isTypeSupported(t)) ?? "";
+
+    const rec = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     recRef.current = rec;
     chunksRef.current = [];
     rec.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
     rec.onstop = async () => {
+      // Stop all mic tracks so indicator goes away
+      stream.getTracks().forEach(t => t.stop());
       if (chunksRef.current.length === 0) { setStatus("ready"); return; }
-      const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+      const blob = new Blob(chunksRef.current, { type: rec.mimeType || "audio/webm" });
       wsRef.current?.send(await blob.arrayBuffer());
     };
-    rec.start(100);
+    // Do NOT use timeslice — collect everything in one ondataavailable at stop()
+    rec.start();
     (rec as any)._startTime = Date.now();
     setStatus("recording");
   };
