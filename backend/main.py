@@ -9,11 +9,13 @@ from voice_clone import voice_manager
 from websocket import voice_conversation_handler
 from config import settings
 from dialogue_router import router as dialogue_router
+from recovery.router import router as recovery_router
 import torch
 
 app = FastAPI(title="VoiceAI Hybrid", version="3.0.0")
 
 app.include_router(dialogue_router)
+app.include_router(recovery_router)  # already has /recovery prefix in router.py
 
 app.add_middleware(
     CORSMiddleware,

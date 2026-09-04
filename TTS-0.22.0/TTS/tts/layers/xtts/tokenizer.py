@@ -611,6 +611,7 @@ class VoiceBpeTokenizer:
             "ja": 71,
             "hu": 224,
             "ko": 95,
+            "hi": 200,  # Hindi — added for Razorpay recovery messages
         }
 
     @cached_property

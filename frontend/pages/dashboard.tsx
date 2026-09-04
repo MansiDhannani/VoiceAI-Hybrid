@@ -167,6 +167,34 @@ export default function Dashboard() {
             🎬 Open Dialogue Studio
           </button>
         </div>
+
+        {/* Revenue Recovery */}
+        <div style={{ ...styles.card, borderColor: "rgba(251,191,36,0.2)" }}>
+          <h2 style={styles.cardTitle}>🏆 AI Revenue Recovery Agent</h2>
+          <p style={styles.hint}>
+            <strong>Razorpay Track 3 Submission:</strong> AI-powered payment recovery system that detects failed and abandoned transactions,
+            runs intelligent decision algorithms, and generates personalized voice reminders using advanced voice cloning AI.
+            Features multi-language support (Hindi/Hinglish/English), bounded stopping rules, and complete audit trails.
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+            <button
+              style={{ ...styles.btn, background: "#d97706" }}
+              onClick={() => router.push("/recovery")}
+            >
+              📊 Recovery Dashboard
+            </button>
+            <button
+              style={{ ...styles.btn, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}
+              onClick={() => router.push("/audit")}
+            >
+              📋 Audit Trail
+            </button>
+          </div>
+          <div style={{ fontSize: 12, padding: 8, background: "rgba(245,158,11,0.1)", borderRadius: 6, color: "#f59e0b" }}>
+            <strong>🧪 DEMO MODE:</strong> Uses synthetic transaction data for demonstration purposes. 
+            Core AI/ML component: Advanced voice cloning with XTTS-v2 + OpenVoice V2 hybrid.
+          </div>
+        </div>
       </div>
     </div>
   );
