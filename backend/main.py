@@ -123,3 +123,36 @@ async def health():
         },
         **gpu_info,
     }
+
+
+# ── Evaluation Metrics ────────────────────────────────────────────
+
+@app.get("/metrics")
+async def get_metrics():
+    """Live evaluation metrics: latency, language detection accuracy, voice similarity."""
+    import metrics as m
+    return m.get_all_metrics()
+
+
+@app.get("/metrics/latency")
+async def get_latency():
+    import metrics as m
+    return m.get_latency_stats()
+
+
+@app.get("/metrics/language")
+async def get_language():
+    import metrics as m
+    return m.get_lang_accuracy_stats()
+
+
+@app.get("/metrics/similarity")
+async def get_similarity():
+    import metrics as m
+    return m.get_similarity_stats()
+
+
+@app.get("/metrics/recovery")
+async def get_recovery_metrics():
+    import metrics as m
+    return m.get_recovery_stats()

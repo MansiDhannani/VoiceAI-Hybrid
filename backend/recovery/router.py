@@ -5,6 +5,7 @@ FastAPI router for revenue recovery endpoints.
 import asyncio
 import io
 import os
+import time
 import uuid
 from pathlib import Path
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Form, File, UploadFile
@@ -17,6 +18,7 @@ from recovery.dataset import (
 )
 from recovery.ai_agent import decide, get_stopping_rules
 from recovery import audit
+import metrics
 
 router = APIRouter(prefix="/recovery", tags=["Revenue Recovery"])
 
@@ -90,7 +92,17 @@ async def ai_decide(tx_id: str):
     if not tx:
         raise HTTPException(404, f"Transaction {tx_id} not found")
 
+    t0 = time.perf_counter()
     decision = decide(tx)
+    decision_ms = (time.perf_counter() - t0) * 1000
+
+    # Record metrics
+    metrics.record_recovery_decision(
+        tx_id=tx_id,
+        action=decision["action"],
+        prob=tx.recovery_probability,
+        latency_ms=decision_ms,
+    )
 
     # Log to audit trail
     audit_entry = audit.log(
@@ -301,7 +313,16 @@ async def run_batch(background_tasks: BackgroundTasks, max_transactions: int = 2
     decisions = []
 
     for tx in txs:
+        t0 = time.perf_counter()
         decision = decide(tx)
+        decision_ms = (time.perf_counter() - t0) * 1000
+
+        metrics.record_recovery_decision(
+            tx_id=tx.transaction_id,
+            action=decision["action"],
+            prob=tx.recovery_probability,
+            latency_ms=decision_ms,
+        )
         audit_entry = audit.log(
             transaction=tx,
             decision=decision,

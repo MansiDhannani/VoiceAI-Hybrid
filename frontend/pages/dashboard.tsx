@@ -195,6 +195,22 @@ export default function Dashboard() {
             Core AI/ML component: Advanced voice cloning with XTTS-v2 + OpenVoice V2 hybrid.
           </div>
         </div>
+
+        {/* Evaluation Metrics */}
+        <div style={{ ...styles.card, borderColor: "rgba(16,185,129,0.2)" }}>
+          <h2 style={styles.cardTitle}>📊 Evaluation Metrics</h2>
+          <p style={styles.hint}>
+            Live proof of system performance: pipeline latency (ASR / LLM / TTS), 
+            language detection accuracy, voice similarity scores, and recovery decision throughput.
+            Measured with real instrumentation — not simulated.
+          </p>
+          <button
+            style={{ ...styles.btn, background: "#059669" }}
+            onClick={() => router.push("/metrics")}
+          >
+            📈 View Metrics
+          </button>
+        </div>
       </div>
     </div>
   );
