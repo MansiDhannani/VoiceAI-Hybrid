@@ -1,3 +1,4 @@
+import re
 import httpx
 from config import settings
 
@@ -11,7 +12,7 @@ class LLMEngine:
         if settings.LLM_PROVIDER == "groq":
             self.url = "https://api.groq.com/openai/v1/chat/completions"
             self.key = settings.GROQ_API_KEY
-            self.model = "llama-3.1-8b-instant"   # free, 14,400 req/day
+            self.model = "qwen/qwen3.8-27b"   # active on Groq as of 2026
         else:
             self.url = "https://api.openai.com/v1/chat/completions"
             self.key = settings.OPENAI_API_KEY
@@ -22,7 +23,6 @@ class LLMEngine:
 
     async def chat_async(self, user_text: str) -> str:
         self.history.append({"role": "user", "content": user_text})
-        # Keep last 10 turns to stay within context
         messages = [{"role": "system", "content": SYSTEM_PROMPT}] + self.history[-10:]
 
         async with httpx.AsyncClient(timeout=15) as client:
@@ -42,8 +42,11 @@ class LLMEngine:
             resp.raise_for_status()
             reply = resp.json()["choices"][0]["message"]["content"].strip()
 
+        # Strip <think>...</think> blocks that some Qwen models produce
+        reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
+
         self.history.append({"role": "assistant", "content": reply})
-        print(f"[LLM] → {reply[:80]}...")
+        print(f"[LLM] → {reply[:80]}")
         return reply
 
     def reset(self):
