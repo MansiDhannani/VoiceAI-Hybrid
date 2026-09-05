@@ -207,16 +207,18 @@ export default function Dashboard() {
           {/* Recovery Agent */}
           <div style={s.secCard}>
             <div style={s.secIcon}>💰</div>
-            <div style={s.secTitle}>AI Revenue Recovery Agent</div>
+            <div style={s.secTitle}>Example Use Case: Payment Recovery</div>
             <p style={s.secDesc}>
-              Detects failed payments, runs AI decisions, and sends personalised voice reminders.
-              <span style={s.razorBadge}>Razorpay Track 3</span>
+              One way VoiceAI can be applied — detecting failed transactions and sending personalised voice reminders in the customer's preferred language.
             </p>
             <div style={s.secActions}>
               <button className="muted-btn" style={s.secBtn}
                 onClick={() => router.push("/recovery")}>📊 Dashboard</button>
               <button className="muted-btn" style={s.secBtn}
                 onClick={() => router.push("/audit")}>📋 Audit</button>
+            </div>
+            <div style={{ fontSize: 11, color: "#334155", marginTop: 8, lineHeight: 1.6 }}>
+              Demo uses simulated transaction data for privacy — the pipeline is built to connect to live payment webhooks in production.
             </div>
           </div>
 
